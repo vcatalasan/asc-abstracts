@@ -248,7 +248,7 @@ class ASC_Abstracts {
                 'email_address' => $email_address
             );
             $this->update_author( $presenter_id, $update );
-            $this->email_confirmation( $abstract );
+            $this->email_confirmation( 'presenter_accepted', $abstract );
         }
         // show confirmation
         if ( $abstract['confirmation'] && $abstract['confirmation'] == $status ) {
@@ -256,7 +256,6 @@ class ASC_Abstracts {
             $values = array_merge( $abstract, $this->map_object_name( 'author', $presenter ));
             return $this->do_template( do_shortcode( $template ), $values );
         }
-        $this->email_confirmation( 'presenter_accepted', $abstract );
     }
 
     function email_confirmation( $status, $abstract ) {
@@ -268,7 +267,7 @@ class ASC_Abstracts {
         $template = self::$settings['admin'][ $status ]['message'];
         $message = $this->do_template( $template, $values );
 
-        $to = 'val@bscmanage.com';
+        $to = $presenter['email_address'];
         $subject = self::$settings['admin'][ $status ]['subject'];
 
         add_filter( 'wp_mail_content_type', array( $this, 'set_html_content_type' ));
