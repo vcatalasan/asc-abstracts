@@ -167,10 +167,44 @@ class ASC_Abstracts {
         // ( $action, $template );
 
         $abstract = $this->data['abstract'];
+        $authors = $this->data['authors'];
 
         if ( empty( $abstract) || ($action == 'session' && empty( $abstract['session_number'] )) ) return; // no abstract or session info
 
-        return $this->do_template( do_shortcode( $template ), $abstract );
+        // get presenter if any
+        $presenter = $abstract['session_author'] ? $this->get_presenter( $abstract['session_author'], $authors ) : array(
+            'first_name' => $abstract['submitter.first_name'],
+            'last_name' => $abstract['submitter.last_name'],
+            'email_address' => $abstract['submitter.email_address']
+        );
+
+        // set default values
+        $presenter = shortcode_atts( array(
+            'control_number' => $abstract['control_number'],
+            'pkID' => null,
+            'first_name' => null,
+            'last_name' => null,
+            'degrees' => null,
+            'institution_name' => null,
+            'institution_city' => null,
+            'institution_state' => null,
+            'institution_country' => null,
+            'institution_department' => null,
+            'email_address' => null,
+            'phone_number' => null,
+            'mailing_address' => null,
+            'mailing_city' => null,
+            'mailing_state' => null,
+            'mailing_country' => null,
+            'author_type' => null,
+            // gravity form reference
+            'gf_form_id' => null,
+            'gf_entry_id' => null
+        ), $presenter );
+
+        $values = array_merge( $abstract, $this->map_object_name( 'author', $presenter ) );
+
+        return $this->do_template( do_shortcode( $template ), $values );
     }
 
     function presenter_api( $args ) {
