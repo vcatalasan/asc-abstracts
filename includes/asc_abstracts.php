@@ -171,38 +171,17 @@ class ASC_Abstracts {
 
         if ( empty( $abstract) || ($action == 'session' && empty( $abstract['session_number'] )) ) return; // no abstract or session info
 
-        // get presenter if any
-        $presenter = $abstract['session_author'] ? $this->get_presenter( $abstract['session_author'], $authors ) : array(
+        // set default values
+        $contact = array(
             'first_name' => $abstract['submitter.first_name'],
             'last_name' => $abstract['submitter.last_name'],
             'email_address' => $abstract['submitter.email_address']
         );
+        $presenter = $this->get_confirmed_presenter( $abstract['session_author'], $authors );
+        $presenter ? $contact = $presenter : $presenter = array();
 
-        // set default values
-        $presenter = shortcode_atts( array(
-            'control_number' => $abstract['control_number'],
-            'pkID' => null,
-            'first_name' => null,
-            'last_name' => null,
-            'degrees' => null,
-            'institution_name' => null,
-            'institution_city' => null,
-            'institution_state' => null,
-            'institution_country' => null,
-            'institution_department' => null,
-            'email_address' => null,
-            'phone_number' => null,
-            'mailing_address' => null,
-            'mailing_city' => null,
-            'mailing_state' => null,
-            'mailing_country' => null,
-            'author_type' => null,
-            // gravity form reference
-            'gf_form_id' => null,
-            'gf_entry_id' => null
-        ), $presenter );
-
-        $values = array_merge( $abstract, $this->map_object_name( 'author', $presenter ) );
+        $values = array_merge( $abstract, $this->map_object_name( 'author', $this->author_atts( $presenter ) ),
+            $this->map_object_name( 'contact', $this->author_atts( $contact ) ));
 
         return $this->do_template( do_shortcode( $template ), $values );
     }
@@ -224,30 +203,8 @@ class ASC_Abstracts {
             $presenter = $authors ? $this->get_presenter( $_REQUEST['presenter'] ? $_REQUEST['presenter'] : $abstract['session_author'], $authors ) : array();
 
         // set default values
-        $presenter = shortcode_atts( array(
-            'control_number' => $abstract['control_number'],
-            'pkID' => null,
-            'first_name' => null,
-            'last_name' => null,
-            'degrees' => null,
-            'institution_name' => null,
-            'institution_city' => null,
-            'institution_state' => null,
-            'institution_country' => null,
-            'institution_department' => null,
-            'email_address' => null,
-            'phone_number' => null,
-            'mailing_address' => null,
-            'mailing_city' => null,
-            'mailing_state' => null,
-            'mailing_country' => null,
-            'author_type' => null,
-            // gravity form reference
-            'gf_form_id' => null,
-            'gf_entry_id' => null
-        ), $presenter );
-
-        $values = array_merge( $abstract, $this->map_object_name( 'author', $presenter ) );
+        $author = $this->author_atts( $presenter );
+        $values = array_merge( $abstract, $this->map_object_name( 'author', $author ) );
         return $this->do_template( do_shortcode( $template ), $values );
     }
 
@@ -266,6 +223,11 @@ class ASC_Abstracts {
             $email_address = $_REQUEST['email_address'];
             $confirmation = $_REQUEST['accept'];
 
+            $contact = $abstract['session_author'] ? $this->get_presenter( $abstract['session_author'], $authors ) : array(
+                'first_name' => $abstract['submitter.first_name'],
+                'last_name' => $abstract['submitter.last_name'],
+                'email_address' => $abstract['submitter.email_address']
+            );
             $presenter = $this->get_confirmed_presenter( $presenter_id, $authors );
 
             if ( empty( $presenter )) return;
@@ -282,29 +244,41 @@ class ASC_Abstracts {
                 'email_address' => $email_address
             );
             $this->update_author( $presenter_id, $update );
-            $this->email_confirmation( 'presenter_accepted', $abstract );
+            $presenter = array_merge( $presenter, $update );
+
+            $this->send_confirmation( $abstract, $presenter, $contact );
         }
         // show confirmation
         if ( $abstract['confirmation'] && $abstract['confirmation'] == $status ) {
             $presenter = $this->get_confirmed_presenter( $abstract['session_author'], $authors );
-            $values = array_merge( $abstract, $this->map_object_name( 'author', $presenter ));
+            $values = array_merge( $abstract, $this->map_object_name( 'author', $this->author_atts( $presenter ) ));
             return $this->do_template( do_shortcode( $template ), $values );
         }
     }
 
-    function email_confirmation( $status, $abstract ) {
+    function send_confirmation( $abstract, $presenter, $contact ) {
 
-        $authors = $this->data['authors'];
-        $presenter = $this->get_confirmed_presenter( $abstract['session_author'], $authors );
-        $values = array_merge( $abstract, $this->map_object_name( 'author', $presenter ));
-
-        $template = self::$settings['admin'][ $status ]['message'];
-        $message = $this->do_template( $template, $values );
-
-        $to = $presenter['email_address'];
-        $subject = self::$settings['admin'][ $status ]['subject'];
+        if ( !in_array( $abstract['confirmation'], array('accepted','declined') )) return;
 
         add_filter( 'wp_mail_content_type', array( $this, 'set_html_content_type' ));
+
+        $values = array_merge( $abstract, $this->map_object_name( 'author', $this->author_atts( $presenter ) ),
+            $this->map_object_name( 'contact', $this->author_atts( $contact ) ));
+
+        if ( $contact['email_address'] && strcasecmp( $presenter['email_address'], $contact['email_address'] ) ) {
+            // send presenter changed message to contact
+            $to = $contact['email_address'];
+            $subject = $this->do_template( self::$settings['admin']['presenter_changed']['subject'], $values );
+            $message = $this->do_template( self::$settings['admin']['presenter_changed']['message'], $values );
+            wp_mail( $to, $subject, $message );
+        }
+
+        $confirmation = "presenter_{$abstract['confirmation']}";
+
+        // send confirmation message to presenter
+        $to = $presenter['email_address'];
+        $subject = $this->do_template( self::$settings['admin'][ $confirmation ]['subject'], $values );
+        $message = $this->do_template( self::$settings['admin'][ $confirmation ]['message'], $values );
         wp_mail( $to, $subject, $message );
     }
 
@@ -335,9 +309,36 @@ class ASC_Abstracts {
 
                 $presenter = $this->get_presenter( $_REQUEST['presenter'] ? $_REQUEST['presenter'] : $abstract['session_author'], $authors );
         }
-        $values = array_merge( $abstract, $this->map_object_name( 'author', $presenter ));
+        $author = $this->author_atts( $presenter );
+        $values = array_merge( $abstract, $this->map_object_name( 'author', $author ));
 
         return $this->do_template( do_shortcode( $template ), $values );
+    }
+
+    function author_atts( $atts ) {
+        $abstract = $this->data['abstract'];
+        return shortcode_atts( array(
+            'control_number' => $abstract['control_number'],
+            'pkID' => null,
+            'first_name' => null,
+            'last_name' => null,
+            'degrees' => null,
+            'institution_name' => null,
+            'institution_city' => null,
+            'institution_state' => null,
+            'institution_country' => null,
+            'institution_department' => null,
+            'email_address' => null,
+            'phone_number' => null,
+            'mailing_address' => null,
+            'mailing_city' => null,
+            'mailing_state' => null,
+            'mailing_country' => null,
+            'author_type' => null,
+            // gravity form reference
+            'gf_form_id' => null,
+            'gf_entry_id' => null
+        ), $atts );
     }
 
     function get_abstract( $webkey ) {
@@ -366,29 +367,11 @@ class ASC_Abstracts {
         $abstract = $this->get_abstract( $webkey );
 
         $input = $this->get_input_fields( $entry, $form );
+        $input['gf_form_id'] = $entry['form_id'];
+        $input['gf_entry_id'] = $entry['id'];
 
         // set default values
-        $author = shortcode_atts( array(
-            'control_number' => $abstract['control_number'],
-            'first_name' => null,
-            'last_name' => null,
-            'degrees' => null,
-            'institution_name' => null,
-            'institution_city' => null,
-            'institution_state' => null,
-            'institution_country' => null,
-            'institution_department' => null,
-            'email_address' => null,
-            'phone_number' => null,
-            'mailing_address' => null,
-            'mailing_city' => null,
-            'mailing_state' => null,
-            'mailing_country' => null,
-            'author_type' => null,
-            // gravity form reference
-            'gf_form_id' => $entry['form_id'],
-            'gf_entry_id' => $entry['id']
-        ), $input );
+        $author = $this->author_atts( $input );
 
         /*
         // check if author already exist for this abstract

@@ -40,12 +40,14 @@ class ASC_Abstracts_Admin {
 
     function load_settings() {
         $presenter_accepted = get_option( 'presenter_accepted' );
+        $presenter_declined = get_option( 'presenter_declined' );
         $presenter_changed = get_option( 'presenter_changed' );
         $this->settings = array(
             // admin panel options
             'enable_custom_post_types' => get_option( 'enable_custom_post_types' ),
             'enable_custom_templates' => get_option( 'enable_custom_post_types' ),
             'presenter_accepted' => $presenter_accepted && is_serialized( $presenter_accepted ) ? unserialize( $presenter_accepted ) : array(),
+            'presenter_declined' => $presenter_declined && is_serialized( $presenter_declined ) ? unserialize( $presenter_declined ) : array(),
             'presenter_changed' => $presenter_changed && is_serialized( $presenter_changed ) ? unserialize( $presenter_changed ) : array()
         );
     }
@@ -77,6 +79,21 @@ class ASC_Abstracts_Admin {
                     <tr>
                         <td><label for="presenter_accepted_message">Message</label></td>
                         <td><textarea id="presenter_accepted_message" name="settings[presenter_accepted][message]" style="width:500px;height:100px;"><?php echo htmlentities($this->settings['presenter_accepted']['message']);?></textarea></td>
+                    </tr>
+                    <tr><td colspan="2">&nbsp;</td></tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td>
+                            <strong><?php _e( 'Presenter Declined', 'asc-abstracts' ); ?></strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="presenter_declined_subject">Subject</label></td>
+                        <td><input id="presenter_declined_subject" name="settings[presenter_declined][subject]" value="<?php echo htmlentities( $this->settings['presenter_declined']['subject'] ) ?>" /></td>
+                    </tr>
+                    <tr>
+                        <td><label for="presenter_declined_message">Message</label></td>
+                        <td><textarea id="presenter_declined_message" name="settings[presenter_declined][message]" style="width:500px;height:100px;"><?php echo htmlentities($this->settings['presenter_declined']['message']);?></textarea></td>
                     </tr>
                     <tr><td colspan="2">&nbsp;</td></tr>
                     <tr>
@@ -117,6 +134,7 @@ class ASC_Abstracts_Admin {
         $settings = shortcode_atts( array(
             'enable_custom_post_types' => 0,
             'presenter_accepted' => array(),
+            'presenter_declined' => array(),
             'presenter_changed' => array()
         ), $_POST['settings'] );
 
