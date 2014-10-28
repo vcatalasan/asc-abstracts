@@ -1,6 +1,6 @@
 <?php
 
-class BSC_Abstract_CPost {
+class ASC_Abstract_CPost {
 
     private static $instance = null;
 
@@ -28,20 +28,20 @@ class BSC_Abstract_CPost {
         $this->custom_post_types = array(
             'abstract' => array(
                 'labels' => array(
-                    'name'               => __( 'Abstracts', 'bsc-abstract'),
-                    'singular_name'      => __( 'Abstract', 'bsc-abstract' ),
-                    'menu_name'          => __( 'Abstracts', 'bsc-abstract' ),
-                    'name_admin_bar'     => __( 'Abstract', 'bsc-abstract' ),
-                    'add_new'            => __( 'Add New', 'bsc-abstract' ),
-                    'add_new_item'       => __( 'Add New Abstract', 'bsc-abstract' ),
-                    'new_item'           => __( 'New Abstract', 'bsc-abstract' ),
-                    'edit_item'          => __( 'Edit Abstract', 'bsc-abstract' ),
-                    'view_item'          => __( 'View Abstract', 'bsc-abstract' ),
-                    'all_items'          => __( 'All Abstracts', 'bsc-abstract' ),
-                    'search_items'       => __( 'Search Abstracts', 'bsc-abstract' ),
-                    'parent_item_colon'  => __( 'Parent Abstracts:', 'bsc-abstract' ),
-                    'not_found'          => __( 'No abstracts found.', 'bsc-abstract' ),
-                    'not_found_in_trash' => __( 'No abstracts found in Trash.', 'bsc-abstract' )
+                    'name'               => __( 'Abstracts', 'asc-abstract'),
+                    'singular_name'      => __( 'Abstract', 'asc-abstract' ),
+                    'menu_name'          => __( 'Abstracts', 'asc-abstract' ),
+                    'name_admin_bar'     => __( 'Abstract', 'asc-abstract' ),
+                    'add_new'            => __( 'Add New', 'asc-abstract' ),
+                    'add_new_item'       => __( 'Add New Abstract', 'asc-abstract' ),
+                    'new_item'           => __( 'New Abstract', 'asc-abstract' ),
+                    'edit_item'          => __( 'Edit Abstract', 'asc-abstract' ),
+                    'view_item'          => __( 'View Abstract', 'asc-abstract' ),
+                    'all_items'          => __( 'All Abstracts', 'asc-abstract' ),
+                    'search_items'       => __( 'Search Abstracts', 'asc-abstract' ),
+                    'parent_item_colon'  => __( 'Parent Abstracts:', 'asc-abstract' ),
+                    'not_found'          => __( 'No abstracts found.', 'asc-abstract' ),
+                    'not_found_in_trash' => __( 'No abstracts found in Trash.', 'asc-abstract' )
                 ),
                 'public'             => true,
                 'publicly_queryable' => true,
@@ -58,20 +58,20 @@ class BSC_Abstract_CPost {
             ),
             'author' => array(
                 'labels' => array(
-                    'name'               => __( 'Authors', 'bsc-abstract'),
-                    'singular_name'      => __( 'Author', 'bsc-abstract' ),
-                    'menu_name'          => __( 'Authors', 'bsc-abstract' ),
-                    'name_admin_bar'     => __( 'Author', 'bsc-abstract' ),
-                    'add_new'            => __( 'Add New', 'bsc-abstract' ),
-                    'add_new_item'       => __( 'Add New Author', 'bsc-abstract' ),
-                    'new_item'           => __( 'New Author', 'bsc-abstract' ),
-                    'edit_item'          => __( 'Edit Author', 'bsc-abstract' ),
-                    'view_item'          => __( 'View Author', 'bsc-abstract' ),
-                    'all_items'          => __( 'All Authors', 'bsc-abstract' ),
-                    'search_items'       => __( 'Search Authors', 'bsc-abstract' ),
-                    'parent_item_colon'  => __( 'Parent Authors:', 'bsc-abstract' ),
-                    'not_found'          => __( 'No authors found.', 'bsc-abstract' ),
-                    'not_found_in_trash' => __( 'No authors found in Trash.', 'bsc-abstract' )
+                    'name'               => __( 'Authors', 'asc-abstract'),
+                    'singular_name'      => __( 'Author', 'asc-abstract' ),
+                    'menu_name'          => __( 'Authors', 'asc-abstract' ),
+                    'name_admin_bar'     => __( 'Author', 'asc-abstract' ),
+                    'add_new'            => __( 'Add New', 'asc-abstract' ),
+                    'add_new_item'       => __( 'Add New Author', 'asc-abstract' ),
+                    'new_item'           => __( 'New Author', 'asc-abstract' ),
+                    'edit_item'          => __( 'Edit Author', 'asc-abstract' ),
+                    'view_item'          => __( 'View Author', 'asc-abstract' ),
+                    'all_items'          => __( 'All Authors', 'asc-abstract' ),
+                    'search_items'       => __( 'Search Authors', 'asc-abstract' ),
+                    'parent_item_colon'  => __( 'Parent Authors:', 'asc-abstract' ),
+                    'not_found'          => __( 'No authors found.', 'asc-abstract' ),
+                    'not_found_in_trash' => __( 'No authors found in Trash.', 'asc-abstract' )
                 ),
                 'public'             => true,
                 'publicly_queryable' => true,

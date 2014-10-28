@@ -1,4 +1,4 @@
-bsc-abstract
+asc-abstract
 ==============
 
-BSC Abstract Submission and Management plugin
+ASC Abstract Submission and Management plugin

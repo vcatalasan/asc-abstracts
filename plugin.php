@@ -2,9 +2,9 @@
 // Exit if accessed directly
 if ( !defined( 'ABSPATH' ) ) exit;
 
-require( plugin_dir_path( __FILE__) . 'includes/bsc_abstract.php' );
+require( plugin_dir_path( __FILE__) . 'includes/asc_abstract.php' );
 
-class BSC_Abstract_Plugin extends BSC_Abstract {
+class ASC_Abstract_Plugin extends ASC_Abstract {
 
     // plugin general initialization
 
@@ -52,7 +52,7 @@ class BSC_Abstract_Plugin extends BSC_Abstract {
         //verify user is running WP 3.0 or newer
         if ( version_compare( get_bloginfo( 'version' ), '3.0', '<' ) ) {
             deactivate_plugins( self::$plugin_name ); // Deactivate our plugin
-            wp_die( __( 'This plugin requires WordPress version 3.0 or higher.', 'bsc-abstract' ) );
+            wp_die( __( 'This plugin requires WordPress version 3.0 or higher.', 'asc-abstract' ) );
         }
         flush_rewrite_rules();
     }

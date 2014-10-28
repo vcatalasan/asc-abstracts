@@ -1,6 +1,6 @@
 <?php
 
-class BSC_Abstract_Admin {
+class ASC_Abstract_Admin {
 
     private static $instance = null;
 
@@ -35,7 +35,7 @@ class BSC_Abstract_Admin {
     
     function admin_menu() {
         $minimum_cap = 'manage_options';
-        add_submenu_page( 'options-general.php', __( 'BSC Abstract Settings', 'bsc-abstract' ), __( 'BSC Abstract', 'bsc-abstract' ), $minimum_cap, 'bsc_abstract_settings', array( $this, 'admin_settings' ), plugins_url( 'bsc-abstract/images/abstract.png' ) );
+        add_submenu_page( 'options-general.php', __( 'ASC Abstract Settings', 'asc-abstract' ), __( 'ASC Abstract', 'asc-abstract' ), $minimum_cap, 'asc_abstract_settings', array( $this, 'admin_settings' ), plugins_url( 'asc-abstract/images/abstract.png' ) );
     }
 
     function load_settings() {
@@ -51,7 +51,7 @@ class BSC_Abstract_Admin {
     }
 
     /**
-     * BSC-Abstract main settings page output.
+     * ASC-Abstract main settings page output.
      */
     function admin_settings() {
         // get application default settings
@@ -61,13 +61,13 @@ class BSC_Abstract_Admin {
         <div class="wrap">
             <form id="admin-settings" method="post">
                 <?php if ( function_exists('wp_nonce_field') ) wp_nonce_field('admin_options_check'); ?>
-                <p><input type="checkbox" id="enable_custom_post_types" name="settings[enable_custom_post_types]" value="1" <?php checked( $this->settings['enable_custom_post_types'], true ); ?>/>&nbsp;<label for="enable_custom_post_types"><strong><?php _e( 'Enable custom post types', 'bsc-abstract' ); ?></strong> (experimental)</label></p>
+                <p><input type="checkbox" id="enable_custom_post_types" name="settings[enable_custom_post_types]" value="1" <?php checked( $this->settings['enable_custom_post_types'], true ); ?>/>&nbsp;<label for="enable_custom_post_types"><strong><?php _e( 'Enable custom post types', 'asc-abstract' ); ?></strong> (experimental)</label></p>
                 <h3>Abstract Confirmation Messages</h3>
                 <table>
                     <tr>
                         <td>&nbsp;</td>
                         <td>
-                            <strong><?php _e( 'Presenter Accepted', 'bsc-abstract' ); ?></strong>
+                            <strong><?php _e( 'Presenter Accepted', 'asc-abstract' ); ?></strong>
                         </td>
                     </tr>
                     <tr>
@@ -82,7 +82,7 @@ class BSC_Abstract_Admin {
                     <tr>
                         <td>&nbsp;</td>
                         <td>
-                            <strong><?php _e( 'Presenter Changed', 'bsc-abstract' ); ?></strong>
+                            <strong><?php _e( 'Presenter Changed', 'asc-abstract' ); ?></strong>
                         </td>
                     </tr>
                     <tr>
@@ -96,7 +96,7 @@ class BSC_Abstract_Admin {
                     <tr>
 	                    <td>&nbsp;</td>
 	                    <td>
-		                    <input type="submit" class="button button-primary" name="Save" value="<?php esc_attr_e( 'Save Options', 'bsc-abstract' ); ?>" />
+		                    <input type="submit" class="button button-primary" name="Save" value="<?php esc_attr_e( 'Save Options', 'asc-abstract' ); ?>" />
 	                    </td>
                     </tr>
                 </table>
