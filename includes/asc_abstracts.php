@@ -2,12 +2,12 @@
 // Exit if accessed directly
 if ( !defined( 'ABSPATH' ) ) exit;
 
-require( 'asc_abstract_cpost.php' );
-require( 'asc_abstract_admin.php' );
+require('asc_abstracts_cpost.php');
+require( 'asc_abstracts_admin.php' );
 
-class ASC_Abstract {
+class ASC_Abstracts {
 
-    var $version = '1.0.0';
+    var $version = '1.0.1';
 
     protected static $settings = array();
 
@@ -23,7 +23,7 @@ class ASC_Abstract {
     //__________________________________________________________________________________________________________________
 
     function get_settings() {
-        self::$settings['admin'] = ASC_Abstract_Admin::get_instance()->settings;
+        self::$settings['admin'] = ASC_Abstracts_Admin::get_instance()->settings;
     }
 
     function register_shortcodes() {
@@ -32,7 +32,7 @@ class ASC_Abstract {
         add_filter( 'the_content', 'wpautop' , 99);
         add_filter( 'the_content', array( $this, 'shortcode_unautop' ), 100 );
         // program shortcodes
-        add_shortcode( 'asc-abstract', array( $this, 'api_shortcode' ));
+        add_shortcode( 'asc-abstracts', array( $this, 'api_shortcode' ));
         add_shortcode( 'repeat-data', array( $this, 'repeat_data_shortcode' ) );
         // gravity form integration
         add_action( 'gform_after_submission', array( $this, 'add_author' ), 10, 2 );
@@ -55,13 +55,13 @@ class ASC_Abstract {
         //wp_enqueue_script( 'tablesort-widget', self::$settings['program']['dir_url'] . 'includes/jquery-tablesorter/jquery.tablesorter.widgets.min.js' );
         wp_enqueue_script( 'bootstrap-script', self::$settings['program']['dir_url'] . 'includes/bootstrap/js/bootstrap.min.js' );
         wp_enqueue_script( 'bootstrapValidator-script', self::$settings['program']['dir_url'] . 'includes/bootstrapValidator/js/bootstrapValidator.min.js' );
-        wp_enqueue_script( 'asc-abstract-script', self::$settings['program']['dir_url'] . 'script.js' );
+        wp_enqueue_script( 'asc-abstracts-script', self::$settings['program']['dir_url'] . 'script.js' );
     }
 
     function custom_stylesheets() {
         wp_enqueue_style( 'bootstrap-style', self::$settings['program']['dir_url'] . 'includes/bootstrap/css/bootstrap.min.css' );
         wp_enqueue_style( 'bootstrapValidator-style', self::$settings['program']['dir_url'] . 'includes/bootstrapValidator/css/bootstrapValidator.min.css' );
-        wp_enqueue_style( 'asc-abstract-style', self::$settings['program']['dir_url'] . 'style.css' );
+        wp_enqueue_style( 'asc-abstracts-style', self::$settings['program']['dir_url'] . 'style.css' );
     }
 
     function custom_print_styles() {
@@ -75,7 +75,7 @@ class ASC_Abstract {
     //__________________________________________________________________________________________________________________
     // Register custom post types and templates
     function register_custom_post_types() {
-        self::$settings['custom_post_types'] = self::$settings['admin']['enable_custom_post_types'] ? ASC_Abstract_CPost::get_instance()->custom_post_types : null;
+        self::$settings['custom_post_types'] = self::$settings['admin']['enable_custom_post_types'] ? ASC_Abstracts_CPost::get_instance()->custom_post_types : null;
     }
 
     //__________________________________________________________________________________________________________________
