@@ -30,7 +30,7 @@ class ASC_Abstracts {
         // remove auto paragraph inside shortcodes
         remove_filter( 'the_content', 'wpautop' );
         add_filter( 'the_content', 'wpautop' , 99);
-        add_filter( 'the_content', array( $this, 'shortcode_unautop' ), 100 );
+        add_filter( 'the_content', 'shortcode_unautop', 100 );
         // program shortcodes
         add_shortcode( 'asc-abstracts', array( $this, 'api_shortcode' ));
         add_shortcode( 'repeat-data', array( $this, 'repeat_data_shortcode' ) );
@@ -457,57 +457,4 @@ class ASC_Abstracts {
         return $values;
     }
 
-    /**
-     * Don't auto-p wrap shortcodes that stand alone
-     *
-     * Ensures that shortcodes are not wrapped in <<p>>...<</p>>.
-     *
-     * @since 2.9.0
-     *
-     * @param string $content The content.
-     * @return string The filtered content.
-     */
-    function shortcode_unautop( $content ) {
-        global $shortcode_tags;
-
-        if ( empty( $shortcode_tags ) || !is_array( $shortcode_tags ) ) {
-            return $content;
-        }
-
-        $tagregexp = join( '|', array_map( 'preg_quote', array_keys( $shortcode_tags ) ) );
-
-        $pattern =
-            '/'
-            . '<p>'                              // Opening paragraph
-            . '\\s*+'                            // Optional leading whitespace
-            . '('                                // 1: The shortcode
-            .     '\\['                          // Opening bracket
-            .     "($tagregexp)"                 // 2: Shortcode name
-            .     '(?![\\w-])'                   // Not followed by word character or hyphen
-            // Unroll the loop: Inside the opening shortcode tag
-            .     '[^\\]\\/]*'                   // Not a closing bracket or forward slash
-            .     '(?:'
-            .         '\\/(?!\\])'               // A forward slash not followed by a closing bracket
-            .         '[^\\]\\/]*'               // Not a closing bracket or forward slash
-            .     ')*?'
-            .     '(?:'
-            .         '\\/\\]'                   // Self closing tag and closing bracket
-            .     '|'
-            .         '\\]'                      // Closing bracket
-            .         '(?:'                      // Unroll the loop: Optionally, anything between the opening and closing shortcode tags
-            .             '[^\\[]*+'             // Not an opening bracket
-            .             '(?:'
-            .                 '\\[(?!\\/\\2\\])' // An opening bracket not followed by the closing shortcode tag
-            .                 '[^\\[]*+'         // Not an opening bracket
-            .             ')*+'
-            .             '\\[\\/\\2\\]'         // Closing shortcode tag
-            .         ')?'
-            .     ')'
-            . ')'
-            . '\\s*+'                            // optional trailing whitespace
-            . '<\\/p>'                           // closing paragraph
-            . '/s';
-
-        return preg_replace( $pattern, '$1', $content );
-    }
-} 
+}
