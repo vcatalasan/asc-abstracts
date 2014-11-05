@@ -367,6 +367,7 @@ class ASC_Abstracts {
         $abstract = $this->get_abstract( $webkey );
 
         $input = $this->get_input_fields( $entry, $form );
+        $input['control_number'] = $abstract['control_number'];
         $input['gf_form_id'] = $entry['form_id'];
         $input['gf_entry_id'] = $entry['id'];
 
