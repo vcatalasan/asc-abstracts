@@ -204,8 +204,8 @@ class ASC_Abstracts {
             $presenter = $authors ? $this->get_presenter( $_REQUEST['presenter'] ? $_REQUEST['presenter'] : $abstract['session_author'], $authors ) : array();
 
         // set default values
-        $author = $this->author_atts( $presenter );
-        $values = array_merge( $abstract, $this->map_object_name( 'author', $author ) );
+        $presenter = $this->author_atts( $presenter );
+        $values = array_merge( $abstract, $this->map_object_name( 'presenter', $presenter ) );
         return $this->do_template( do_shortcode( $template ), $values );
     }
 
@@ -269,12 +269,12 @@ class ASC_Abstracts {
 
         add_filter( 'wp_mail_content_type', array( $this, 'set_html_content_type' ));
 
-        $values = array_merge( $abstract, $this->map_object_name( 'author', $this->author_atts( $presenter ) ),
+        $values = array_merge( $abstract, $this->map_object_name( 'presenter', $this->author_atts( $presenter ) ),
             $this->map_object_name( 'contact', $this->author_atts( $contact ) ));
 
         if ( $contact['email_address'] && strcasecmp( $presenter['email_address'], $contact['email_address'] ) ) {
-            // send presenter changed message to contact
-            $to = $contact['email_address'];
+            // send presenter changed message to owner
+            $to = $abstract['owner.email_address'];
             $subject = $this->do_template( self::$settings['admin']['presenter_changed']['subject'], $values );
             $message = $this->do_template( self::$settings['admin']['presenter_changed']['message'], $values );
             wp_mail( $to, $subject, $message );
