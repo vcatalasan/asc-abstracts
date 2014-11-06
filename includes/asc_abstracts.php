@@ -280,7 +280,7 @@ class ASC_Abstracts {
             wp_mail( $to, $subject, $message );
         }
 
-        $confirmation = "presenter_{$abstract['confirmation']}";
+        $confirmation = ((preg_match( "/{$abstract['owner.email_address']}/", $presenter['email_address'])) ?  "owner" :" presenter") . "_{$abstract['confirmation']}";
 
         // send confirmation message to presenter
         $to = $presenter['email_address'];

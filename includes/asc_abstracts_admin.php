@@ -39,6 +39,7 @@ class ASC_Abstracts_Admin {
     }
 
     function load_settings() {
+        $owner_accepted = get_option( 'owner_accepted' );
         $presenter_accepted = get_option( 'presenter_accepted' );
         $presenter_declined = get_option( 'presenter_declined' );
         $presenter_changed = get_option( 'presenter_changed' );
@@ -46,6 +47,7 @@ class ASC_Abstracts_Admin {
             // admin panel options
             'enable_custom_post_types' => get_option( 'enable_custom_post_types' ),
             'enable_custom_templates' => get_option( 'enable_custom_post_types' ),
+            'owner_accepted' => $owner_accepted && is_serialized( $owner_accepted ) ? unserialize( $owner_accepted ) : array(),
             'presenter_accepted' => $presenter_accepted && is_serialized( $presenter_accepted ) ? unserialize( $presenter_accepted ) : array(),
             'presenter_declined' => $presenter_declined && is_serialized( $presenter_declined ) ? unserialize( $presenter_declined ) : array(),
             'presenter_changed' => $presenter_changed && is_serialized( $presenter_changed ) ? unserialize( $presenter_changed ) : array()
@@ -66,6 +68,21 @@ class ASC_Abstracts_Admin {
                 <p><input type="checkbox" id="enable_custom_post_types" name="settings[enable_custom_post_types]" value="1" <?php checked( $this->settings['enable_custom_post_types'], true ); ?>/>&nbsp;<label for="enable_custom_post_types"><strong><?php _e( 'Enable custom post types', 'asc-abstracts' ); ?></strong> (experimental)</label></p>
                 <h3>Abstract Confirmation Messages</h3>
                 <table>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td>
+                            <strong><?php _e( 'Owner Accepted', 'asc-abstracts' ); ?></strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><label for="owner_accepted_subject">Subject</label></td>
+                        <td><input id="owner_accepted_subject" name="settings[owner_accepted][subject]" value="<?php echo htmlentities( $this->settings['owner_accepted']['subject'] ) ?>" /></td>
+                    </tr>
+                    <tr>
+                        <td><label for="owner_accepted_message">Message</label></td>
+                        <td><textarea id="owner_accepted_message" name="settings[owner_accepted][message]" style="width:500px;height:100px;"><?php echo htmlentities($this->settings['owner_accepted']['message']);?></textarea></td>
+                    </tr>
+                    <tr><td colspan="2">&nbsp;</td></tr>
                     <tr>
                         <td>&nbsp;</td>
                         <td>
@@ -133,6 +150,7 @@ class ASC_Abstracts_Admin {
         // set default values
         $settings = shortcode_atts( array(
             'enable_custom_post_types' => 0,
+            'owner_accepted' => array(),
             'presenter_accepted' => array(),
             'presenter_declined' => array(),
             'presenter_changed' => array()
