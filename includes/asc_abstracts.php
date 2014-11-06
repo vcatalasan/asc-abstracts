@@ -269,10 +269,10 @@ class ASC_Abstracts {
 
         add_filter( 'wp_mail_content_type', array( $this, 'set_html_content_type' ));
 
-        $values = array_merge( $abstract, $this->map_object_name( 'presenter', $this->author_atts( $presenter ) ),
-            $this->map_object_name( 'contact', $this->author_atts( $contact ) ));
-
         $presenter_changed = strcasecmp( $presenter['email_address'], $contact['email_address'] );
+
+        $values = array_merge( $abstract, $this->map_object_name( 'presenter', $this->author_atts( $presenter ) ),
+            $this->map_object_name( 'contact', $this->author_atts( $presenter_changed ? $contact : array_merge( $presenter, $contact ) )));
 
         if ( $presenter_changed ) {
             // send presenter changed message to owner
@@ -282,7 +282,7 @@ class ASC_Abstracts {
             wp_mail( $to, $subject, $message );
         }
 
-        $confirmation = ($presenter_changed ? " presenter" : "owner") . "_{$abstract['confirmation']}";
+        $confirmation = ($presenter_changed ? "presenter" : "owner") . "_{$abstract['confirmation']}";
 
         // send confirmation message to presenter/owner
         $to = $presenter['email_address'];
