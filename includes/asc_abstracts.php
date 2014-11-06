@@ -170,7 +170,7 @@ class ASC_Abstracts {
         $abstract = $this->data['abstract'];
         $authors = $this->data['authors'];
 
-        if ( empty( $abstract) || ($action == 'session' && empty( $abstract['session_number'] )) ) return; // no abstract or session info
+        if ( empty( $abstract) || $abstract['confirmation'] == 'declined' || ($action == 'session' && empty( $abstract['session_number'] )) ) return; // no abstract or session info
 
         // set default values
         $contact = array(
