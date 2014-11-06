@@ -272,7 +272,9 @@ class ASC_Abstracts {
         $values = array_merge( $abstract, $this->map_object_name( 'presenter', $this->author_atts( $presenter ) ),
             $this->map_object_name( 'contact', $this->author_atts( $contact ) ));
 
-        if ( $contact['email_address'] && strcasecmp( $presenter['email_address'], $contact['email_address'] ) ) {
+        $presenter_changed = strcasecmp( $presenter['email_address'], $contact['email_address'] );
+
+        if ( $presenter_changed ) {
             // send presenter changed message to owner
             $to = $abstract['owner.email_address'];
             $subject = $this->do_template( self::$settings['admin']['presenter_changed']['subject'], $values );
@@ -280,9 +282,9 @@ class ASC_Abstracts {
             wp_mail( $to, $subject, $message );
         }
 
-        $confirmation = ((preg_match( "/{$abstract['owner.email_address']}/", $presenter['email_address'])) ?  "owner" :" presenter") . "_{$abstract['confirmation']}";
+        $confirmation = ($presenter_changed ? " presenter" : "owner") . "_{$abstract['confirmation']}";
 
-        // send confirmation message to presenter
+        // send confirmation message to presenter/owner
         $to = $presenter['email_address'];
         $subject = $this->do_template( self::$settings['admin'][ $confirmation ]['subject'], $values );
         $message = $this->do_template( self::$settings['admin'][ $confirmation ]['message'], $values );
