@@ -29,7 +29,6 @@ class ASC_Abstracts_Plugin extends ASC_Abstracts {
     }
 
     function __construct() {
-        parent::__construct();
 
         // program basename and dir
         self::$settings += array( 'program' => array(
@@ -38,6 +37,8 @@ class ASC_Abstracts_Plugin extends ASC_Abstracts {
             'dir_url' => plugin_dir_url( __FILE__ )
             )
         );
+
+        parent::__construct();
 
         // register plugin
         register_activation_hook( self::$plugin_name, array( self::$instance, 'activate' ) ); // plugin activation actions
