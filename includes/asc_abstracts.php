@@ -53,7 +53,7 @@ class ASC_Abstracts {
     function custom_scripts() {
         //wp_enqueue_script( 'tablesort', self::$settings['program']['dir_url'] . 'includes/jquery-tablesorter/jquery.tablesorter.min.js' );
         //wp_enqueue_script( 'tablesort-widget', self::$settings['program']['dir_url'] . 'includes/jquery-tablesorter/jquery.tablesorter.widgets.min.js' );
-        wp_enqueue_script( 'bootstrap-script', self::$settings['program']['dir_url'] . 'includes/bootstrap/js/bootstrap.min.js' );
+        wp_enqueue_script( 'bootstrap-script', self::$settings['program']['dir_url'] . 'includes/bootstrap/js/bootstrap.min.js', array('jquery' ));
         wp_enqueue_script( 'bootstrapValidator-script', self::$settings['program']['dir_url'] . 'includes/bootstrapValidator/js/bootstrapValidator.min.js' );
         wp_enqueue_script( 'asc-abstracts-script', self::$settings['program']['dir_url'] . 'script.js' );
     }
