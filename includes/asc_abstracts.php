@@ -41,6 +41,7 @@ class ASC_Abstracts {
     function register_callbacks() {
         //add_action( 'save_post', array( $this, 'update_custom_post_slug' ) );
         //add_filter( 'the_content', array( $this, 'the_custom_content' ));
+        add_action( 'wp', array( $this, 'check_confirmation' ));
     }
 
     function register_scripts_stylesheets() {
@@ -173,14 +174,14 @@ class ASC_Abstracts {
 
         // set default values
         $contact = array(
-            'first_name' => $abstract['submitter.first_name'],
-            'last_name' => $abstract['submitter.last_name'],
-            'email_address' => $abstract['submitter.email_address']
+            'first_name' => $abstract['owner.first_name'],
+            'last_name' => $abstract['owner.last_name'],
+            'email_address' => $abstract['owner.email_address']
         );
         $presenter = $this->get_confirmed_presenter( $abstract['session_author'], $authors );
         $presenter ? $contact = $presenter : $presenter = array();
 
-        $values = array_merge( $abstract, $this->map_object_name( 'author', $this->author_atts( $presenter ) ),
+        $values = array_merge( $abstract, $this->map_object_name( 'presenter', $this->author_atts( $presenter ) ),
             $this->map_object_name( 'contact', $this->author_atts( $contact ) ));
 
         return $this->do_template( do_shortcode( $template ), $values );
@@ -224,9 +225,9 @@ class ASC_Abstracts {
             $confirmation = $_REQUEST['accept'];
 
             $contact = $abstract['session_author'] ? $this->get_presenter( $abstract['session_author'], $authors ) : array(
-                'first_name' => $abstract['submitter.first_name'],
-                'last_name' => $abstract['submitter.last_name'],
-                'email_address' => $abstract['submitter.email_address']
+                'first_name' => $abstract['owner.first_name'],
+                'last_name' => $abstract['owner.last_name'],
+                'email_address' => $abstract['owner.email_address']
             );
             $presenter = $this->get_confirmed_presenter( $presenter_id, $authors );
 
@@ -247,13 +248,19 @@ class ASC_Abstracts {
             $presenter = array_merge( $presenter, $update );
 
             $this->send_confirmation( $abstract, $presenter, $contact );
+            wp_safe_redirect( $_SERVER['REQUEST_URI'] );
+            exit;
         }
         // show confirmation
         if ( $abstract['confirmation'] && $abstract['confirmation'] == $status ) {
             $presenter = $this->get_confirmed_presenter( $abstract['session_author'], $authors );
-            $values = array_merge( $abstract, $this->map_object_name( 'author', $this->author_atts( $presenter ) ));
+            $values = array_merge( $abstract, $this->map_object_name( 'presenter', $this->author_atts( $presenter ) ));
             return $this->do_template( do_shortcode( $template ), $values );
         }
+    }
+
+    function check_confirmation() {
+        do_shortcode( '[asc-abstracts action=confirmation]' );
     }
 
     function send_confirmation( $abstract, $presenter, $contact ) {
@@ -309,8 +316,8 @@ class ASC_Abstracts {
 
                 $presenter = $this->get_presenter( $_REQUEST['presenter'] ? $_REQUEST['presenter'] : $abstract['session_author'], $authors );
         }
-        $author = $this->author_atts( $presenter );
-        $values = array_merge( $abstract, $this->map_object_name( 'author', $author ));
+        $presenter = $this->author_atts( $presenter );
+        $values = array_merge( $abstract, $this->map_object_name( 'presenter', $presenter ));
 
         return $this->do_template( do_shortcode( $template ), $values );
     }
