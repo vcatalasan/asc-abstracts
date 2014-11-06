@@ -217,6 +217,17 @@ class ASC_Abstracts {
         $abstract = $this->data['abstract'];
         $authors = $this->data['authors'];
 
+        // reset confirmation
+        if ( $_GET['unconfirmed'] == self::$settings['admin']['unconfirmed_key'] ) {
+            $update = array(
+                'confirmation' => null,
+                'session_author' => null
+            );
+            $this->update_abstract( $abstract['webkey'], $update);
+            wp_safe_redirect( strtok( $_SERVER["REQUEST_URI"], '?' ) . "?webkey={$webkey}" );
+            exit;
+        }
+
         // update confirmation
         if ( $confirmation_mode && !$abstract['confirmation']) {
             $presenter_id = $_REQUEST['author_id'];
@@ -282,7 +293,7 @@ class ASC_Abstracts {
             wp_mail( $to, $subject, $message );
         }
 
-        $confirmation = ($presenter_changed ? "presenter" : "owner") . "_{$abstract['confirmation']}";
+        $confirmation = ($presenter_changed || $abstract['confirmation'] == 'declined' ? "presenter" : "owner") . "_{$abstract['confirmation']}";
 
         // send confirmation message to presenter/owner
         $to = $presenter['email_address'];

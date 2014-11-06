@@ -47,6 +47,7 @@ class ASC_Abstracts_Admin {
             // admin panel options
             'enable_custom_post_types' => get_option( 'enable_custom_post_types' ),
             'enable_custom_templates' => get_option( 'enable_custom_post_types' ),
+            'unconfirmed_key' => get_option( 'unconfirmed_key' ),
             'owner_accepted' => $owner_accepted && is_serialized( $owner_accepted ) ? unserialize( $owner_accepted ) : array(),
             'presenter_accepted' => $presenter_accepted && is_serialized( $presenter_accepted ) ? unserialize( $presenter_accepted ) : array(),
             'presenter_declined' => $presenter_declined && is_serialized( $presenter_declined ) ? unserialize( $presenter_declined ) : array(),
@@ -66,6 +67,7 @@ class ASC_Abstracts_Admin {
             <form id="admin-settings" method="post">
                 <?php if ( function_exists('wp_nonce_field') ) wp_nonce_field('admin_options_check'); ?>
                 <p><input type="checkbox" id="enable_custom_post_types" name="settings[enable_custom_post_types]" value="1" <?php checked( $this->settings['enable_custom_post_types'], true ); ?>/>&nbsp;<label for="enable_custom_post_types"><strong><?php _e( 'Enable custom post types', 'asc-abstracts' ); ?></strong> (experimental)</label></p>
+                <p><input type="text" id="unconfirmed_key" name="settings[unconfirmed_key]" value="<?php echo htmlentities( $this->settings['unconfirmed_key'] ); ?>"/>&nbsp;<label for="unconfirmed_key"><strong><?php _e( 'Key to reset confirmation', 'asc-abstracts' ); ?></strong></label></p>
                 <h3>Abstract Confirmation Messages</h3>
                 <table>
                     <tr>
@@ -147,23 +149,26 @@ class ASC_Abstracts_Admin {
 
         check_admin_referer( 'admin_options_check' ); //nonce WP security check
 
+        if ( empty( $_POST['settings']['unconfirmed_key'] ) ) unset( $_POST['settings']['unconfirmed_key'] );
+
         // set default values
         $settings = shortcode_atts( array(
             'enable_custom_post_types' => 0,
+            'unconfirmed_key' => md5( 'ascabstract' ),
             'owner_accepted' => array(),
             'presenter_accepted' => array(),
             'presenter_declined' => array(),
             'presenter_changed' => array()
         ), $_POST['settings'] );
 
-	    $safe = function( $value ) use ( &$safe ) {
+	    $sanitize = function( $value ) use ( &$sanitize ) {
 			if ( is_numeric( $value ) )
 				return $value;
 		    if ( is_string( $value ) )
 			    return stripslashes( $value );
 		    if ( is_array( $value ) ) {
 			    foreach ( $value as $key => $sub_value )
-				    $value[ $key ] = $safe( $sub_value );
+				    $value[ $key ] = $sanitize( $sub_value );
 			    $value = serialize( $value );
 		    }
 			return $value;
@@ -171,6 +176,6 @@ class ASC_Abstracts_Admin {
 
         //save settings
         foreach ( $settings as $key => $value )
-	        update_option( $key, $safe( $value  ));
+	        update_option( $key, $sanitize( $value  ));
     }
 }
