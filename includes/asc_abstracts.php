@@ -286,12 +286,14 @@ class ASC_Abstracts {
 
         $presenter_changed = strcasecmp( $presenter['email_address'], $contact['email_address'] );
 
+        $contact = $presenter_changed ? $contact : array_merge( $presenter, $contact );
+
         $values = array_merge( $abstract, $this->map_object_name( 'presenter', $this->author_atts( $presenter ) ),
-            $this->map_object_name( 'contact', $this->author_atts( $presenter_changed ? $contact : array_merge( $presenter, $contact ) )));
+            $this->map_object_name( 'contact', $this->author_atts( $contact )));
 
         if ( $presenter_changed ) {
-            // send presenter changed message to owner
-            $to = $abstract['owner.email_address'];
+            // send presenter changed message to contact/owner
+            $to = $contact['email_address'];
             $subject = $this->do_template( self::$settings['admin']['presenter_changed']['subject'], $values );
             $message = $this->do_template( self::$settings['admin']['presenter_changed']['message'], $values );
             wp_mail( $to, $subject, $message );
