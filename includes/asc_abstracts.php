@@ -128,6 +128,9 @@ class ASC_Abstracts {
     function load_abstract_data( $webkey ) {
         $this->data['abstract'] = $this->get_abstract( $webkey );
         $this->data['authors'] = $this->get_authors( $webkey );
+
+        // set confirmed presenter as default presenter for this abstract
+        empty( $this->data['abstract']['session_author'] ) and  $this->data['abstract']['session_author'] = self::get_confirmed_presenter_id( $this->data['abstract']['control_number'] );
     }
 
     function repeat_data_shortcode( $atts, $content = null ) {
@@ -196,12 +199,6 @@ class ASC_Abstracts {
         $authors = $this->data['authors'];
 
         if ( !$presenter_mode || $abstract['confirmation'] ) return;
-
-        $confirmed_presenter_id = self::get_confirmed_presenter_id( $abstract['control_number'] );
-
-        if ( $confirmed_presenter_id ) {
-            $presenter = $this->get_confirmed_presenter( $confirmed_presenter_id, $authors );
-        }
 
         if ( $_REQUEST['new_author_id'] )
             $presenter = $this->get_presenter_by_entryid( $_REQUEST['new_author_id'] );
