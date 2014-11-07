@@ -119,6 +119,11 @@ class ASC_Abstracts {
             $args['new_disclosure_mode'] = $_REQUEST['new-disclosure'] == 'Yes' ? true : false;
             $args['confirmation_mode'] = $_REQUEST['confirmation'] ? true : false;
             $args['presenter_mode'] = ($args['new_author_mode'] || $args['new_disclosure_mode'] || $args['confirmation_mode'] ) ? false : true;
+            $args['confirmed_presenter'] = self::get_confirmed_presenter_id( $this->data['abstract']['control_number'] );
+
+            // set confirmed presenter as default presenter for this abstract and its associated sessions if any
+            if ( $args['confirmed_presenter'] && count( $this->data['abstract'] ) && empty( $this->data['abstract']['session_author'] ) )
+                $this->data['abstract']['session_author'] = $args['confirmed_presenter'];
         }
 
         // call action if exist
@@ -128,10 +133,6 @@ class ASC_Abstracts {
     function load_abstract_data( $webkey ) {
         $this->data['abstract'] = $this->get_abstract( $webkey );
         $this->data['authors'] = $this->get_authors( $webkey );
-
-        // set confirmed presenter as default presenter for this abstract
-        count( $this->data['abstract'] ) and empty( $this->data['abstract']['session_author'] ) and
-            $this->data['abstract']['session_author'] = self::get_confirmed_presenter_id( $this->data['abstract']['control_number'] );
     }
 
     function repeat_data_shortcode( $atts, $content = null ) {
@@ -174,7 +175,10 @@ class ASC_Abstracts {
         $abstract = $this->data['abstract'];
         $authors = $this->data['authors'];
 
-        if ( empty( $abstract) || $abstract['confirmation'] == 'declined' || ($action == 'session' && empty( $abstract['session_number'] )) ) return; // no abstract or session info
+        if ( empty( $abstract) // no abstract info
+            || ($action == 'session' && empty( $abstract['session_number'] )) // no session info
+            || $abstract['confirmation'] == 'declined' // declined confirmation
+        ) return;
 
         // set default values
         $contact = array(
@@ -199,7 +203,11 @@ class ASC_Abstracts {
         $abstract = $this->data['abstract'];
         $authors = $this->data['authors'];
 
-        if ( !$presenter_mode || $abstract['confirmation'] ) return;
+        if ( !$presenter_mode // not in presenter mode
+            || $abstract['confirmation'] // already confirmed
+            || ($status != 'confirmed' && $confirmed_presenter) // status is not confirmed but there is a confirmed presenter
+            || ($status == 'confirmed' && !$confirmed_presenter) // status is confirmed but there is no confirmed presenter
+        ) return;
 
         if ( $_REQUEST['new_author_id'] )
             $presenter = $this->get_presenter_by_entryid( $_REQUEST['new_author_id'] );
@@ -246,7 +254,7 @@ class ASC_Abstracts {
             );
             $presenter = $this->get_confirmed_presenter( $presenter_id, $authors );
 
-            if ( empty( $presenter )) return;
+            if ( empty( $presenter )) return; // no presenter found
 
             $update = array(
                 'confirmation' => $confirmation,
@@ -280,7 +288,7 @@ class ASC_Abstracts {
 
     function send_confirmation( $abstract, $presenter, $contact ) {
 
-        if ( !in_array( $abstract['confirmation'], array('accepted','declined') )) return;
+        if ( !in_array( $abstract['confirmation'], array('accepted','declined') )) return;  // no valid confirmation
 
         add_filter( 'wp_mail_content_type', array( $this, 'set_html_content_type' ));
 
@@ -323,15 +331,15 @@ class ASC_Abstracts {
 
         switch ( $action ) {
             case 'new-author':
-                if ( !$new_author_mode ) return;
+                if ( !$new_author_mode ) return; // not adding new author
                 $presenter = array();
                 break;
 
             case 'new-disclosure':
-                if ( !$new_disclosure_mode ) return;
+                if ( !$new_disclosure_mode ) return; // not adding new disclosure
 
             default:
-                if ( empty( $authors )) return;  //no authors
+                if ( empty( $authors )) return;  // no authors found
 
                 $presenter = $this->get_presenter( $_REQUEST['presenter'] ? $_REQUEST['presenter'] : $abstract['session_author'], $authors );
         }
