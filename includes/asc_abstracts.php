@@ -130,7 +130,8 @@ class ASC_Abstracts {
         $this->data['authors'] = $this->get_authors( $webkey );
 
         // set confirmed presenter as default presenter for this abstract
-        empty( $this->data['abstract']['session_author'] ) and  $this->data['abstract']['session_author'] = self::get_confirmed_presenter_id( $this->data['abstract']['control_number'] );
+        count( $this->data['abstract'] ) and empty( $this->data['abstract']['session_author'] ) and
+            $this->data['abstract']['session_author'] = self::get_confirmed_presenter_id( $this->data['abstract']['control_number'] );
     }
 
     function repeat_data_shortcode( $atts, $content = null ) {
