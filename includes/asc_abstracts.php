@@ -7,7 +7,7 @@ require( 'asc_abstracts_admin.php' );
 
 class ASC_Abstracts {
 
-    var $version = '1.0.1';
+    var $version = '1.0.5';
 
     protected static $settings = array();
 
@@ -131,6 +131,8 @@ class ASC_Abstracts {
     }
 
     function load_abstract_data( $webkey ) {
+        static $load = 0;
+        if ( $load++ ) return; // data is already loaded
         $this->data['abstract'] = $this->get_abstract( $webkey );
         $this->data['authors'] = $this->get_authors( $webkey );
     }
