@@ -197,6 +197,12 @@ class ASC_Abstracts {
 
         if ( !$presenter_mode || $abstract['confirmation'] ) return;
 
+        $confirmed_presenter_id = self::get_confirmed_presenter_id( $abstract['control_number'] );
+
+        if ( $confirmed_presenter_id ) {
+            $presenter = $this->get_confirmed_presenter( $confirmed_presenter_id, $authors );
+        }
+
         if ( $_REQUEST['new_author_id'] )
             $presenter = $this->get_presenter_by_entryid( $_REQUEST['new_author_id'] );
 
@@ -465,6 +471,12 @@ class ASC_Abstracts {
             $columns .= isset( $columns ) ? ',' . $a : $a;
         }
         return $columns;
+    }
+
+    function get_confirmed_presenter_id( $control_number ) {
+        global $wpdb;
+
+        return $wpdb->get_var( "SELECT max(session_author) FROM abstracts WHERE control_number = '$control_number' AND confirmation = 'accepted' GROUP BY control_number" );
     }
 
     function escape_quotes( $values ) {
