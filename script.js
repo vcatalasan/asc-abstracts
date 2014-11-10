@@ -52,7 +52,7 @@ jQuery( document ).ready( function($) {
         }
     });
     $('#change-presenter').click( function() {
-        location.href = location.pathname + '?webkey=' + getParameterByName( 'webkey' ) + "&presenter=" + getSelectedItem( 'authors' )
+        location.href = location.pathname + '?webkey=' + getParameterByName( 'webkey' ) + "&presenter=" + $( 'select[name=presenter] option:selected').val();
     });
     $('#new-author').click( function(){
         location.href = location.pathname + '?webkey=' + getParameterByName( 'webkey' ) + "&new-author=yes"
