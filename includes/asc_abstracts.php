@@ -219,8 +219,26 @@ class ASC_Abstracts {
 
         // set default values
         $presenter = $this->author_atts( $presenter );
+        $this->data['presenter'] = $presenter;
         $values = array_merge( $abstract, $this->map_object_name( 'presenter', $presenter ) );
-        return $this->do_template( do_shortcode( $template ), $values );
+        add_shortcode('select-presenter', array($this, 'select_presenter_shortcode'));
+        $output = $this->do_template( do_shortcode( $template ), $values );
+        remove_shortcode('select-presenter');
+        return $output;
+    }
+
+    function select_presenter_shortcode() {
+        $presenter = $this->data['presenter'];
+        $authors = $this->data['authors'];
+
+        $output = '<select name="presenter">';
+
+        foreach ($authors as $author) {
+            $selected = $presenter['pkID'] === $author->pkID ? 'selected' : '';
+            $output .= "<option value=\"{$author->pkID}\" {$selected}>{$author->first_name} {$author->last_name} {$author->degrees}</option>";
+        }
+        $output .= "</select>";
+        return $output;
     }
 
     function confirmation_api( $args ) {

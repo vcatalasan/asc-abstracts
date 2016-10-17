@@ -51,12 +51,14 @@ jQuery( document ).ready( function($) {
             }
         }
     });
-    $('#change-presenter').click( function() {
-        location.href = location.pathname + '?webkey=' + getParameterByName( 'webkey' ) + "&presenter=" + $( 'select[name=presenter] option:selected').val();
-    });
+    $('#change-presenter').click( changePresenter );
+    $('select[name=presenter]').change( changePresenter );
     $('#new-author').click( function(){
         location.href = location.pathname + '?webkey=' + getParameterByName( 'webkey' ) + "&new-author=yes"
     });
+    function changePresenter() {debugger;
+        location.href = location.pathname + '?webkey=' + getParameterByName( 'webkey' ) + "&presenter=" + $( 'select[name=presenter] option:selected').val();
+    }
     function getSelectedItem( authors ) {
         var e = document.getElementById( authors );
         return e.options[e.selectedIndex].value;
