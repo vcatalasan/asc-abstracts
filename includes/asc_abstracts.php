@@ -436,7 +436,13 @@ class ASC_Abstracts {
 
         $sql  = "INSERT INTO auths_temp_export";
         $sql .= " (`" . implode( "`, `", array_keys( $author )) . "`)";
-        $sql .= " VALUES ('". implode( "', '", $author ) . "') ";
+        $sql .= " VALUES (". implode( ", ", array_map(
+            function($value){
+                global $wpdb;
+                return $wpdb->prepare("%s", $value);
+            },
+            $author
+            )) . ") ";
 
         $wpdb->query( $sql );
     }
