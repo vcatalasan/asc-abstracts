@@ -179,7 +179,7 @@ class ASC_Abstracts {
 
         if ( empty( $abstract) // no abstract info
             || ($action == 'session' && empty( $abstract['session_number'] )) // no session info
-            || $abstract['confirmation'] == 'declined' // declined confirmation
+            || in_array($abstract['confirmation'], array('declined','withdrawn')) // declined or withdrawn confirmation
         ) return;
 
         // set default values
