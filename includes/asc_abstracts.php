@@ -158,7 +158,7 @@ class ASC_Abstracts {
         // add query function for custom data selection
         $data['query'] = function( $sql ) {
 	        global $wpdb;
-			return $wpdb->get_results( $sql, ARRAY_N );
+			return $wpdb->get_results( $sql, ARRAY_A );
         };
 
         ob_start();
