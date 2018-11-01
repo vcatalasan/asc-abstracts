@@ -148,11 +148,18 @@ class ASC_Abstracts {
             'webkey' => $_REQUEST['webkey']
         ), $atts );
 
+        // add abstract data accessible to the external application
         if ( empty($data) ) {
             // get specified abstract info
             $this->load_abstract_data($args['webkey']);
             $data = $this->data;
         }
+
+        // add query function for custom data selection
+        $data['query'] = function( $sql ) {
+	        global $wpdb;
+			return $wpdb->get_results( $sql, ARRAY_N );
+        };
 
         ob_start();
 

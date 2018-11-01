@@ -3,7 +3,7 @@
 Plugin Name: ASC Abstracts
 Plugin URI: http://www.bscmanage.com/plugins/asc-abstracts/
 Description: ASC Abstracts submission and management
-Version: 1.1.0
+Version: 1.2.0
 Requires at least: WordPress 2.9.1 / Formidable Pro
 Tested up to: WordPress 2.9.1 / BuddyPress 1.2
 License: GNU/GPL 2
