@@ -24,6 +24,7 @@ class ASC_Abstracts {
 
     function get_settings() {
         self::$settings['admin'] = ASC_Abstracts_Admin::get_instance()->settings;
+        self::$settings['include-file-path'] = $this->default_include_file_path();
     }
 
     function register_shortcodes() {
@@ -33,6 +34,7 @@ class ASC_Abstracts {
         add_filter( 'the_content', 'shortcode_unautop', 100 );
         // program shortcodes
         add_shortcode( 'asc-abstracts', array( $this, 'api_shortcode' ));
+        add_shortcode( 'asc-include-file', array( $this, 'include_file_shortcode') );
         add_shortcode( 'repeat-data', array( $this, 'repeat_data_shortcode' ) );
         // gravity form integration
         add_action( 'gform_after_submission', array( $this, 'add_author' ), 10, 2 );
@@ -135,6 +137,57 @@ class ASC_Abstracts {
         if ( $load++ ) return; // data is already loaded
         $this->data['abstract'] = $this->get_abstract( $webkey );
         $this->data['authors'] = $this->get_authors( $webkey );
+    }
+
+    function include_file_shortcode( $atts ) {
+        static $data = null;
+
+        $args = shortcode_atts( array(
+            'path' => self::$settings['include-file-path'],
+            'name' => 'index.php',
+            'webkey' => $_REQUEST['webkey']
+        ), $atts );
+
+        if ( empty($data) ) {
+            // get specified abstract info
+            $this->load_abstract_data($args['webkey']);
+            $data = $this->data;
+        }
+
+        ob_start();
+
+        $file = "{$args['path']}{$args['name']}";
+        if ( file_exists( $file ) )
+            include( $file );
+        else
+            echo "{$file} does not exists!";
+
+        return ob_get_clean();
+    }
+
+    private function default_include_file_path() {
+        $path = ABSPATH.'asc-include-file/';
+        if ( !file_exists( $path ) ) {
+            mkdir($path, 0777, true);
+
+            file_put_contents(
+                "{$path}/index.php",
+                "<?php 
+                        /*
+                         * [asc-include-file name='index.php'] shortcode
+                         * 
+                         * \$data variable available to this script                         
+                         */
+                        echo '<h1>\$data[\'abstract\']';
+                        var_dump(\$data['abstract']); 
+                        echo '<h1>\$data[\'authors\']';
+                        var_dump(\$data['authors']); 
+                        ?>
+                        ",
+                FILE_USE_INCLUDE_PATH
+            );
+        }
+        return $path;
     }
 
     function repeat_data_shortcode( $atts, $content = null ) {
