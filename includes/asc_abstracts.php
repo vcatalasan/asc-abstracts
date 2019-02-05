@@ -129,7 +129,7 @@ class ASC_Abstracts {
         }
 
         // call action if exist
-        return method_exists( $this, $apis[ $action ] ) && count( $this->data['abstract'] ) ? call_user_func( array( $this, $apis[ $action ] ), $args ) : '';
+        return method_exists( $this, $apis[ $action ] ) && !empty( $this->data['abstract'] ) ? call_user_func( array( $this, $apis[ $action ] ), $args ) : '';
     }
 
     function load_abstract_data( $webkey ) {
