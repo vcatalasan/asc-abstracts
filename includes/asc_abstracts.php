@@ -137,6 +137,10 @@ class ASC_Abstracts {
         if ( $load++ ) return; // data is already loaded
         $this->data['abstract'] = $this->get_abstract( $webkey );
         $this->data['authors'] = $this->get_authors( $webkey );
+        $this->data['presenter'] = $this->get_confirmed_presenter(
+            $this->data['abstract']['session_author'],
+            $this->data['authors']
+        );
     }
 
     function include_file_shortcode( $atts ) {
