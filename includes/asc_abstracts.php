@@ -173,7 +173,7 @@ class ASC_Abstracts {
         else
             echo "{$file} does not exists!";
 
-        return ob_get_clean();
+        return do_shortcode( ob_get_clean() );
     }
 
     private function default_include_file_path() {
