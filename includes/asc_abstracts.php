@@ -359,7 +359,7 @@ class ASC_Abstracts {
             exit;
         }
         // show confirmation
-        if ( $abstract['confirmation'] && $abstract['confirmation'] == $status ) {
+        if ( $abstract['confirmation'] && $abstract['confirmation'] == $status && !$new_disclosure_mode ) {
             $presenter = $this->get_confirmed_presenter( $abstract['session_author'], $authors );
             $values = array_merge( $abstract, $this->map_object_name( 'presenter', $this->author_atts( $presenter ) ));
             return $this->do_template( do_shortcode( $template ), $values );
