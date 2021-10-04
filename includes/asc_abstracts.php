@@ -430,6 +430,9 @@ class ASC_Abstracts {
         $presenter = $this->author_atts( $presenter );
         $values = array_merge( $abstract, $this->map_object_name( 'presenter', $presenter ));
 
+		add_filter( 'gform_field_value_control_number', function($value) use ($presenter) {
+			return $presenter['control_number'] ? $presenter['control_number'] : $value;
+		});
         return $this->do_template( do_shortcode( $template ), $values );
     }
 
