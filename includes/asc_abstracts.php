@@ -242,8 +242,9 @@ class ASC_Abstracts {
         $authors = $this->data['authors'];
 
         if ( empty( $abstract) // no abstract info
-            || ($action == 'session' && empty( $abstract['session_number'] )) // no session info
+            || ('session' === $action && empty( $abstract['session_number'] )) // no session info
             || in_array($abstract['confirmation'], array('declined','withdrawn')) // declined or withdrawn confirmation
+	        || $new_disclosure_mode
         ) return;
 
         // set default values
